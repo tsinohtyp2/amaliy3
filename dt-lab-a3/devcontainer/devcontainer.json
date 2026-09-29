@@ -1,0 +1,30 @@
+{
+  "name": "Taqsimlangan tizimlar — Amaliy 3 (REST va navbat)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
+  "forwardPorts": [8000, 15672, 5672],
+  "portsAttributes": {
+    "8000": { "label": "REST API" },
+    "15672": { "label": "RabbitMQ paneli" },
+    "5672": { "label": "AMQP" }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker",
+        "humao.rest-client"
+      ]
+    }
+  },
+  "hostRequirements": { "cpus": 2 }
+}
