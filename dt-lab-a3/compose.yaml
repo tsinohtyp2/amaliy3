@@ -1,0 +1,48 @@
+services:
+  broker:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"      # AMQP — ilovalar shu portga ulanadi
+      - "15672:15672"    # boshqaruv paneli (guest / guest)
+    healthcheck:
+      # Brokerning tayyorligini tekshiradi. Usiz api va isteʼmolchilar
+      # broker koʻtarilishidan oldin ishga tushib, xato bilan toʻxtaydi.
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build: .
+    ports: [ "8000:8000" ]
+    environment:
+      - BROKER=broker
+    depends_on:
+      broker:
+        condition: service_healthy
+
+  tolov:
+    build: .
+    command: [ "python", "consumer.py" ]
+    environment:
+      - BROKER=broker
+      - NAVBAT=tolov
+      - ISH_VAQTI_MS=500
+    depends_on:
+      broker:
+        condition: service_healthy
+
+  bildirishnoma:
+    build: .
+    command: [ "python", "consumer.py" ]
+    environment:
+      - BROKER=broker
+      - NAVBAT=bildirishnoma
+      - ISH_VAQTI_MS=200
+    depends_on:
+      broker:
+        condition: service_healthy
+
+networks:
+  default:
+    name: dt-tarmoq-a3
